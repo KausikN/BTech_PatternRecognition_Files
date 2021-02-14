@@ -28,7 +28,7 @@ def BhattacharyyaDistance(P1, P2):
     P1 = np.array(P1)
     P2 = np.array(P2)
 
-    dist = 1 - np.sum(np.sqrt(np.multiply((P1 / np.sum(P1)), (P2 / np.sum(P2)))))
+    dist = -np.log(np.sum(np.sqrt(np.multiply((P1 / np.sum(P1)), (P2 / np.sum(P2))))))
 
     return dist
 
