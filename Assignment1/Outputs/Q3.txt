@@ -3,4 +3,13 @@ Doc 1 (201 chars, 32 words, 2 lines):
 Doc 2 (145 chars, 22 words, 2 lines):
  MATLAB works with essentially one kind of object, a rectangular numerical matrix. Here is some basic information on using MATLAB matrix commands.
 
-Cosine Distance: 0.7700986616554552
+All words in documents:
+['engineering', '', 'the', 'a', 'on', 'basic', 'problems', 'of', 'some', 'so', 'solving', 'making', 'mathematical', 'numerical', 'essentially', 'object,', 'information', 'is', 'objects', 'and', 'be', 'program', 'use', 'with', 'one', 'using', 'must', 'vectors', 'commands', 'kind', 'rectangular', 'are', 'works', 'matlab', 'this', 'these', 'familiar', 'matrices,', 'extensive', 'matrix', 'for', 'you', 'here', 'before']
+
+Document 1 Vector:
+[1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 2, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1]
+
+Document 2 Vector:
+[0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 2, 0, 0, 1, 0]
+
+Cosine Distance: 0.6918332243193172

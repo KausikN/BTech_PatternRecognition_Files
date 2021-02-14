@@ -68,7 +68,7 @@ def CosineDistance(P1, P2):
     u = np.array(P1)
     v = np.array(P2)
 
-    dist = np.dot(u, v) / ((np.dot(u, u)**(0.5)) * (np.dot(v, v)**(0.5)))
+    dist = 1 - (np.dot(u, v) / ((np.dot(u, u)**(0.5)) * (np.dot(v, v)**(0.5))))
 
     return dist
 
