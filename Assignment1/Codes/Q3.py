@@ -22,6 +22,9 @@ def GetWordFreq(text):
     for i in range(len(words)):
         words[i] = words[i].strip()
 
+    # Remove Empty words
+    words.remove('')
+
     # Count
     uniqueWords = list(set(words))
     freq = {}
