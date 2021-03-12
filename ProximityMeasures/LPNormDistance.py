@@ -27,9 +27,9 @@ def L_MinusInf_Distance(P1, P2):
 
 # Driver Code
 # Params
-P1 = [0, 0, 0]
-P2 = [2, -4, 3]
-PNorm = 2
+P1 = [0, 3, 4, 5]
+P2 = [7, 6, 3, -1]
+PNorm = 3
 # Params
 
 # RunCode

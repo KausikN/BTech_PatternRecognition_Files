@@ -9,17 +9,17 @@ import numpy as np
 def KLDistance(P1, P2):
     dist = 0
 
-    P1 = np.array(P1)
-    P2 = np.array(P2)
+    P1 = np.array(P1) / np.sum(P1)
+    P2 = np.array(P2) / np.sum(P2)
 
-    dist = np.sum(P1*np.log(np.divide(P1, P2)))
+    dist = np.sum(P1*np.log2(np.divide(P1, P2)))
 
     return dist
 
 # Driver Code
 # Params
-P1 = [0.2, 0.5]
-P2 = [0.2, 0.4]
+P2 = [1/3, 1/2, 1/2]
+P1 = [1/2, 1/3, 1/2]
 # Params
 
 # RunCode
