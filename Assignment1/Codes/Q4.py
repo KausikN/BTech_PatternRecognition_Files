@@ -24,25 +24,46 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.cm as cm
 
-data = pd.read_csv("/content/drive/MyDrive/PR/Assignment_1/Data/Iris_dataset.csv")
-# target = pd.DataFrame(data['variety'])
-data_X = data.drop(columns=["sepal.length","sepal.width"])
-Test = data_X.iloc[[0,50,100],[0,1]]
-data_X = data_X.drop([0,50,100])
+# Main Functions
+def LoadIrisPetalData(path):
+    data = pd.read_csv(path)
+    # target = pd.DataFrame(data['variety'])
+    data_X = data.drop(columns=["sepal.length", "sepal.width"])
+    return data_X
+
+def SplitIrisDataset_TestTrain(data):
+    Test = data.iloc[[0,50,100],[0,1]]
+    data_X = data.drop([0,50,100])
+    return data_X, Test
+
+def ClassSplitIrisDataset(data_X):
+    Setosa_data = data_X.iloc[0:49,[0,1]]
+    Versi_Color_data = data_X.iloc[49:98,[0,1]]
+    Virginica_data = data_X.iloc[98:147,[0,1]]
+    return Setosa_data, Versi_Color_data, Virginica_data
+
+# Driver Code
+# Params
+path = "Assignment1/Data/Iris_dataset.csv"
+# Params
+
+# RunCode
+# Load Dataset
+data = LoadIrisPetalData(path)
+data_X, Test = SplitIrisDataset_TestTrain(data)
 # target['variety'] = target['variety'].astype('category')
 # target['variety'] = target['variety'].cat.codes
 
-plt.scatter(data_X['petal.length'].iloc[0:49],data_X['petal.width'].iloc[0:49], color='r')
-plt.scatter(data_X['petal.length'].iloc[49:98],data_X['petal.width'].iloc[49:98], color='#90ee90')
-plt.scatter(data_X['petal.length'].iloc[98:147],data_X['petal.width'].iloc[98:147], color='yellow')
+# Plot Dataset
+plt.scatter(data_X['petal.length'].iloc[0:49], data_X['petal.width'].iloc[0:49], color='r')
+plt.scatter(data_X['petal.length'].iloc[49:98], data_X['petal.width'].iloc[49:98], color='#90ee90')
+plt.scatter(data_X['petal.length'].iloc[98:147], data_X['petal.width'].iloc[98:147], color='yellow')
 plt.show()
 
 ## The 3 flowers are "Setosa", "Versi", "Virginica"
-Setosa_data = data_X.iloc[0:49,[0,1]]
-Versi_Color_data = data_X.iloc[49:98,[0,1]]
-Virginica_data = data_X.iloc[98:147,[0,1]]
+Setosa_data, Versi_Color_data, Virginica_data = ClassSplitIrisDataset(data_X)
 
-
+# Find Cov Matrices
 setosa_mean = np.mean(Setosa_data)
 versi_mean = np.mean(Versi_Color_data)
 virginica_mean = np.mean(Virginica_data)
@@ -59,6 +80,7 @@ setosa_A = np.linalg.inv(setosa_cov)
 versi_A = np.linalg.inv(versi_cov)
 virginica_A = np.linalg.inv(virginica_cov)
 
+# Calculate Distances
 #Test 1. Setosa Class
 Dist_seto = []
 Dist_seto.append(np.matmul(np.matmul(np.transpose(setosa_mean-Test.iloc[0]),setosa_A),setosa_mean-Test.iloc[0]))
@@ -91,6 +113,6 @@ plt.plot(Test.iloc[1,0],Test.iloc[1,1], "d", color='r', markersize=10)
 plt.plot(Test.iloc[2,0],Test.iloc[2,1], "d", color='purple', markersize=10)
 plt.show()
 
-print("The distance of Row 0 wrt to other classes is {x} and it belongs to {clas} class".format(x=np.around(Dist_seto,3),clas=Category[Dist_seto.index(min(Dist_seto))]))
-print("The distance of Row 50 wrt to other classes is {x} and it belongs to {clas} class".format(x=np.around(Dist_versi,3),clas=Category[Dist_versi.index(min(Dist_versi))]))
-print("The distance of Row 100 wrt to other classes is {x} and it belongs to {clas} class".format(x=np.around(Dist_virgi,3),clas=Category[Dist_virgi.index(min(Dist_virgi))]))
+print("The distance of Row 0 wrt to other classes is {x} and it belongs to {clas} class".format(x=np.around(Dist_seto, 3), clas=Category[Dist_seto.index(min(Dist_seto))]))
+print("The distance of Row 50 wrt to other classes is {x} and it belongs to {clas} class".format(x=np.around(Dist_versi, 3), clas=Category[Dist_versi.index(min(Dist_versi))]))
+print("The distance of Row 100 wrt to other classes is {x} and it belongs to {clas} class".format(x=np.around(Dist_virgi, 3), clas=Category[Dist_virgi.index(min(Dist_virgi))]))
