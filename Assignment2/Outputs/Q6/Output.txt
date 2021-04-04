@@ -1,0 +1,3 @@
+The accuracy is  is 50.0%
+The Determinent of Covariance Matrix =  0.0
+/usr/local/lib/python3.7/dist-packages/ipykernel_launcher.py:114: RuntimeWarning: divide by zero encountered in double_scalars

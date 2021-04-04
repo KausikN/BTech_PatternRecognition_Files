@@ -1,0 +1,7 @@
+[0.2472061126416078, 38.68858304722089, 78.08862009806948]
+[366.65663737691597, 1.27821129970364, 6.006787515811473]
+[850.4265755086019, 36.96256416584203, 3.3237240066980154]
+
+The distance of Row 0 wrt to other classes is [ 0.247 38.689 78.089] and it belongs to Setosa class
+The distance of Row 50 wrt to other classes is [366.657   1.278   6.007] and it belongs to Versicolor class
+The distance of Row 100 wrt to other classes is [850.427  36.963   3.324] and it belongs to Virginica class

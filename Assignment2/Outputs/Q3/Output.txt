@@ -1,0 +1,2 @@
+Equation of decision boundary:
+-0.5625*x**2 + 3.375*x + 3.0*y - 10.3693528194401 = 0

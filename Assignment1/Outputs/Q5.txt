@@ -1,2 +1,0 @@
-Bhattacharyya Distance between Query and Reference 1: 0.04313446287684386
-Bhattacharyya Distance between Query and Reference 2: 0.42370519301397547

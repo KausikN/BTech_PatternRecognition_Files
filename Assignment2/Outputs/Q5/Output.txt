@@ -1,0 +1,13 @@
+Classes: ['Setosa', 'Versicolor', 'Virginica']
+Equation of decision boundary between Setosa and Versicolor :
+Poly(-12.6865798381174*x**2 - 1.85099468439246*x*y + 28.2937251489164*x - 17.0384603174296*y**2 + 0.776591130462183*y + 6.97752556981447, x, y, domain='RR') = 0
+
+Equation of decision boundary between Setosa and Virginica :
+Poly(-16.795702190248*x**2 + 17.9882384055711*x*y + 33.9235015697163*x - 43.1875188420992*y**2 - 21.6819319518596*y + 26.7093655978244, x, y, domain='RR') = 0
+
+Equation of decision boundary between Versicolor and Virginica :
+Poly(-4.10912235213064*x**2 + 19.8392330899636*x*y + 5.62977642079982*x - 26.1490585246696*y**2 - 22.4585230823218*y + 19.73184002801, x, y, domain='RR') = 0
+
+
+
+

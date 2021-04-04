@@ -1,0 +1,2 @@
+Equation of decision boundary:
+8.0*y - 16.0 = 0
