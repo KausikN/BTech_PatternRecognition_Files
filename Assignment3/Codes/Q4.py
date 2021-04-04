@@ -1,157 +1,158 @@
 '''
 Assignment Q4
-Q4. Implement Bayes Classifier for Iris Dataset. 
-Dataset Specifications: 
-Total number of samples = 150
-Number of classes = 3 (Iris setosa, Iris virginica, and Iris versicolor)
-Number of samples in each class = 50 
-Use the following information to design classifier: 
-    Number of training feature vectors ( first 40 in each class) = 40
-    Number of test feature vectors ( remaining 10 in each class) = 10
-    Number of dimensions = 4
-    Feature vector = <sepal length, sepal width, petal length, petal width>
-If the samples follow a multivariate normal density, find the accuracy of classification for the test 
-feature vectors.
+Q4. Eigenfaces-Face classification using PCA (40 classes)
+a) Use the following “face.csv” file to classify the faces of 40 different people.
+b) Do not use the in-built function for implementing PCA.
+c) Use appropriate classifier taught in class (any classification algorithm taught in class
+like Bayes classifier, minimum distance classifier, and so on )
+d) Refer to the following link for a description of the dataset:
+https://towardsdatascience.com/eigenfaces-face-classification-in-python-7b8d2af3d3e
 '''
 
 # Imports
+import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib.cm as cm
-import numpy as np
+import scipy.linalg as la
 import matplotlib.pyplot as plt
 from sympy import symbols, plot_implicit
-import sympy
-from Utils import *
+
+import Utils
 
 # Main Functions
-def P_X_wi(det_sq, X,mean, cov_inv, d=4):
-    coeff = 1/(((2*np.pi)**d/2)*det_sq)
-    prob = coeff*np.exp(-0.5*np.matmul(np.matmul(X-mean,cov_inv),np.transpose(X-mean)))
-    return prob
+def LoadDataset(path='face.csv'):
+    dataset = pd.read_csv(path)
+    return dataset
+
+def GetEigenValsVecs(mat):
+    eigenVals, eigenVecs = la.eig(mat)
+    eVals = eigenVals.real
+    eVecs = np.array(eigenVecs.real).T
+    return eVals, eVecs
+
+def SortEigens(vals, vecs):
+    eVals, eVecs = zip(*sorted(zip(list(vals), list(vecs)), key=lambda x:x[0], reverse=True))
+    eVals = np.array(eVals)
+    eVecs = np.array(eVecs)
+    return eVals, eVecs
+
+def PlotVals(vals, plots=[True, True, True]):
+    if plots[0]:
+        plt.scatter(range(vals.shape[0]), vals)
+    if plots[1]:
+        plt.plot(range(vals.shape[0]), vals)
+    if plots[2]:
+        plt.bar(range(vals.shape[0]), vals, width=0.9)
+    plt.show()
+
+def GetMinDimForSum(vals, partial=0.95):
+    valsSum = np.sum(vals)
+    partialSum = valsSum * partial
+    minDim = 0
+    curSum = 0.0
+    for i in range(vals.shape[0]):
+        curSum += vals[i]
+        minDim += 1
+        if curSum >= partialSum:
+            break
+    return minDim
+
+def PCA(dataset_Matrix, reducedDim=None, adaptiveDimPartial=0.95, plot=False, display=False):
+    if display:
+        print("Data points:", dataset_Matrix.shape)
+        print()
+
+    # Get Cov Matrix and Eigen Values and Vectors
+    dataset_CM = Utils.CovarianceMatrix(dataset_Matrix)
+    if display:
+        print("Covariance Matrix:", dataset_CM.shape, "\n", dataset_CM)
+        print()
+
+    eigenVals, eigenVecs = GetEigenValsVecs(dataset_CM)
+    eigenVals, eigenVecs = SortEigens(eigenVals, eigenVecs)
+    if display:
+        print("Eigen Values:", eigenVals.shape, "\n", eigenVals)
+        print()
+        print("Eigen Vectors:", eigenVecs.shape, "\n", eigenVecs)
+        print()
+
+    if plot:
+        PlotVals(eigenVals[::], plots=[False, True, False])
+
+    # Calculate Minimum dimensions to choose for 95%
+    minDims = reducedDim
+    if minDims is None:
+        minDims = GetMinDimForSum(eigenVals, partial=adaptiveDimPartial)
+    if display:
+        print("Selected Reduced Dimensions:", minDims)
+        print()
+
+    # Form PCA Transform Matrix
+    transformMatrix = eigenVecs[:minDims].T
+    if display:
+        print("Transform Matrix:", transformMatrix.shape, "\n", transformMatrix)
+        print()
+
+    # Reorient Dataset Points to new dimension
+    dataset_PCATransformed = np.matmul(dataset_Matrix, transformMatrix)
+    if display:
+        print("Reduced Data values:", dataset_PCATransformed.shape, "\n", dataset_PCATransformed)
+        print()
+
+    return dataset_PCATransformed
 
 # Driver Code
 # Params
-path = 'Assignment2/Data/Iris_dataset.csv'
+datasetPath = 'Assignment3/Data/face.csv'
+
+plot = False
+display = True
 # Params
 
-# RnCode
-data = pd.read_csv(path)
+# RunCode
+# Load Dataset
+dataset = LoadDataset(datasetPath)
+if display:
+    print("Dataset:\n", dataset.head())
+    print()
 
-# P(w1 |X),P(w2 |X),P(w3 |X) --> Find which is max for the given X
-# P(wi |X) = P(X |wi)*P(wi)   {Divided by P(X) can be ignored}
-# P(wi) = n/N
-# P(X |wi) = multivariate pdf formula
+dataset_Matrix = dataset.drop(labels=['target'], axis=1).to_numpy()
 
-Test_variety = data.iloc[40:50,4]
-Test_variety = Test_variety.append(data.iloc[90:100,4])
-Test_variety = Test_variety.append(data.iloc[140:150,4])
-Test = data.iloc[40:50,0:4]
-Test = Test.append(data.iloc[90:100,0:4])
-Test = Test.append(data.iloc[140:150,0:4])
+dataset_PCATransformed = PCA(dataset_Matrix, reducedDim=None, adaptiveDimPartial=0.95, plot=plot, display=display)
 
-data_X = data.iloc[0:40]
-data_X = data_X.append(data.iloc[50:90])
-data_X = data_X.append(data.iloc[100:140])
+# import pickle
+# pickle.dump(dataset_PCATransformed, open('Assignment3/Data/Q4PCAPoints.p', 'wb'))
+# dataset_PCATransformed = pickle.load(open('Assignment3/Data/Q4PCAPoints.p', 'rb'))
 
-## The 3 flowers are "Setosa", "Versi", "Virginica"
-Setosa_data = data_X.iloc[0:40]
-Versi_Color_data = data_X.iloc[40:80]
-Virginica_data = data_X.iloc[80:120]
+# Classify using Naive Bayes
+# Params
+testCount = 40
+# Params
 
-Setosa_data_1 = data.iloc[0:40]
-Versi_Color_data_1 = data.iloc[50:90]
-Virginica_data_1 = data.iloc[100:140]
+# Prepare Data
+Classes = np.array(dataset['target'].to_numpy(), dtype=int) # 1 for male, 0 for female
+if display:
+    print("Classes:", Classes.shape, "\n", Classes)
+    print()
 
-# Probabilities
-setosa_mean = np.mean(Setosa_data)
-versi_mean = np.mean(Versi_Color_data)
-virginica_mean = np.mean(Virginica_data)
+testIndices = np.random.choice(list(range(dataset.shape[0])), replace=False, size=testCount)
+testPoints = np.zeros((dataset_PCATransformed.shape[0]), dtype=bool)
+testPoints[testIndices] = True
 
-setosa_Z = Setosa_data - setosa_mean
-versi_Z = Versi_Color_data - versi_mean
-virginica_Z = Virginica_data - virginica_mean
+X_train = dataset_PCATransformed[~testPoints]
+Y_train = dataset['target'][~testPoints]
 
-setosa_cov = np.cov(np.transpose(setosa_Z))
-versi_cov = np.cov(np.transpose(versi_Z))
-virginica_cov = np.cov(np.transpose(virginica_Z))
+X_test = dataset_PCATransformed[testPoints]
+Y_test = dataset['target'][testPoints]
 
-setosa_A = np.linalg.inv(setosa_cov)
-versi_A = np.linalg.inv(versi_cov)
-virginica_A = np.linalg.inv(virginica_cov)
+# Classify and Predict
+Classifier = Utils.NaiveBayesClassifier(X_train, Y_train)
+Y_Pred = Classifier.predict(X_test)
+if display:
+    print("Predicted Values for test:", Y_Pred.shape, "\n", Y_Pred)
+    print()
 
-setosa_det_sq = (np.linalg.det(setosa_cov))**0.5
-versi_det_sq = (np.linalg.det(versi_cov))**0.5
-virginica_det_sq = (np.linalg.det(virginica_cov))**0.5
+Correct = np.count_nonzero(Y_test == Y_Pred)
+Wrong = Y_test.shape[0] - Correct
 
-P_X_w1 = []
-P_X_w2 = []
-P_X_w3 = []
-# print(setosa_mean.shape)
-for i in range(len(Test)):
-    P_X_w1.append(P_X_wi(setosa_det_sq,Test.iloc[i],setosa_mean,setosa_A))
-    P_X_w2.append(P_X_wi(versi_det_sq,Test.iloc[i],versi_mean,versi_A))
-    P_X_w3.append(P_X_wi(virginica_det_sq,Test.iloc[i],virginica_mean,virginica_A))
-
-count=0
-count_w1, count_w2, count_w3 = 0, 0, 0
-Category = ["Setosa", "Versicolor","Virginica"]
-# print(len(Test_variety))
-for i in range(len(P_X_w1)):
-    if Test_variety.iloc[i]==Category[np.argmax([P_X_w1[i], P_X_w2[i], P_X_w3[i]])]:
-        count+=1
-    if Test_variety.iloc[i]==Category[np.argmax([P_X_w1[i]])]:
-        count_w1+=1
-    if Test_variety.iloc[i]==Category[np.argmax([P_X_w2[i]])]:
-        count_w2+=1
-    if Test_variety.iloc[i]==Category[np.argmax([P_X_w3[i]])]:
-        count_w3+=1
-
-N = len(data_X)
-num_variety = data_X.groupby(by='variety').agg('count')
-n_1 = num_variety['sepal.length'][0]   # In this case n_1=n_2=n_3
-P_w1 = P_w2 = P_w3 = n_1/N
-data_X = data_X.drop(columns='variety')
-
-print("The overall performance accuracy is {x}%".format(x=100*count/len(Test_variety)))
-print("The accuracy for class w1(Setosa) is {x}%".format(x=100*count_w1/10))
-print("The accuracy for class w2(Versicolor) is {x}%".format(x=100*count_w2/10))
-print("The accuracy for class w3(Virginica) is {x}%".format(x=100*count_w3/10), end="\n\n")
-
-# Get Pts
-featurenames = ['sepal.length', 'sepal.width', 'petal.length', 'petal.width']
-Setosa_pts = np.dstack((Setosa_data_1['sepal.length'], Setosa_data_1['sepal.width'], Setosa_data_1['petal.length'], Setosa_data_1['petal.width']))[0]
-Versi_Color_pts = np.dstack((Versi_Color_data_1['sepal.length'], Versi_Color_data_1['sepal.width'], Versi_Color_data_1['petal.length'], Versi_Color_data_1['petal.width']))[0]
-Virginica_pts = np.dstack((Virginica_data_1['sepal.length'], Virginica_data_1['sepal.width'], Virginica_data_1['petal.length'], Virginica_data_1['petal.width']))[0]
-
-# Discriminant Functions
-Setosa_eq = DiscriminantFunctionEquation(Setosa_pts, 1/3)
-Versi_Color_eq = DiscriminantFunctionEquation(Versi_Color_pts, 1/3)
-Virginica_eq = DiscriminantFunctionEquation(Virginica_pts, 1/3)
-Setosa_eqpoly = sympy.poly(Setosa_eq)
-Versi_Color_eqpoly = sympy.poly(Versi_Color_eq)
-Virginica_eqpoly = sympy.poly(Virginica_eq)
-print("Sentosa Discriminant Func:\n", Setosa_eqpoly)
-print()
-print("Versi_Color Discriminant Func:\n", Versi_Color_eqpoly)
-print()
-print("Virginica Discriminant Func:\n", Virginica_eqpoly)
-
-print()
-
-# Decision Boundary
-DB_Setosa_VersiColor = Setosa_eq - Versi_Color_eq
-DB_VersiColor_Virginica = Versi_Color_eq - Virginica_eq
-DB_Virginica_Setosa = Setosa_eq - Virginica_eq
-
-DB_Setosa_VersiColorpoly = sympy.poly(DB_Setosa_VersiColor)
-DB_VersiColor_Virginicapoly = sympy.poly(DB_VersiColor_Virginica)
-DB_Virginica_Setosapoly = sympy.poly(DB_Virginica_Setosa)
-print("Decision Boundary Sentosa vs VersiColor:\n", DB_Setosa_VersiColorpoly, "= 0")
-print()
-print("Decision Boundary VersiColor vs Virginica:\n", DB_VersiColor_Virginicapoly, "= 0")
-print()
-print("Decision Boundary Sentosa vs Virginica:\n", DB_Virginica_Setosapoly, "= 0")
-
-print()
+print("Correct:", Correct)
+print("Wrong:", Wrong)

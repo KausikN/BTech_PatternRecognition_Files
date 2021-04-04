@@ -35,6 +35,7 @@ import Utils
 # Main Functions
 def LoadDataset(path='gender_featurevectors.csv'):
     dataset = pd.read_csv(path)
+    dataset.rename(columns = {'Unnamed: 0': 'SNo', 'Unnamed: 1': 'Gender'}, inplace = True)
     return dataset
 
 def GetEigenValsVecs(mat):
