@@ -153,6 +153,9 @@ if display:
 
 Correct = np.count_nonzero(Y_test == Y_Pred)
 Wrong = Y_test.shape[0] - Correct
+Accuracy = (Correct / len(Y_Pred))* 100
 
 print("Correct:", Correct)
 print("Wrong:", Wrong)
+
+print("Accuracy : ", Accuracy)
