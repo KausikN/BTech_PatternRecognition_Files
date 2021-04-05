@@ -29,8 +29,6 @@ def ConfusionMatrix(Y_test, Y_Pred, Classes):
         indices.append("Actual " + str(c))
 
     ConfMatrix_df = pd.DataFrame(Conf_Matrix, columns=columns, index=indices)
-    ConfMatrix_df.index = Classes
-    ConfMatrix_df.columns = Classes
 
     return ConfMatrix_df
 
