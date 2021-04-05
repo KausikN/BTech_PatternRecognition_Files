@@ -129,7 +129,7 @@ testCount = 40
 # Params
 
 # Prepare Data
-Classes = np.array(dataset['target'].to_numpy(), dtype=int) # 1 for male, 0 for female
+Classes = np.array(dataset['target'].to_numpy(), dtype=int)
 if display:
     print("Classes:", Classes.shape, "\n", Classes)
     print()
