@@ -153,7 +153,7 @@ mean_vectors = []
 Target = dataset['target'].values
 dataset_Matrix = dataset.drop(labels=['target'], axis=1).to_numpy()
 
-# dataset_Matrix_LDA = LDA(dataset_Matrix, Target, reducedDim=None, adaptiveDimPartial=0.95, plot=plot, display=display)
+dataset_Matrix_LDA = LDA(dataset_Matrix, Target, reducedDim=None, adaptiveDimPartial=0.95, plot=plot, display=display)
 
 # import pickle
 # pickle.dump(dataset_Matrix_LDA, open('Assignment3/Data/Q5LDAPoints.p', 'wb'))
