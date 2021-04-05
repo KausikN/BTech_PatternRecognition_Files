@@ -31,6 +31,18 @@ def PlotVals(vals, plots=[True, True, True]):
         plt.bar(range(vals.shape[0]), vals, width=0.9)
     plt.show()
 
+def GetMinDimForSum(vals, partial=0.95):
+    valsSum = np.sum(vals)
+    partialSum = valsSum * partial
+    minDim = 0
+    curSum = 0.0
+    for i in range(vals.shape[0]):
+        curSum += vals[i]
+        minDim += 1
+        if curSum >= partialSum:
+            break
+    return minDim
+
 def LDA(dataset_Matrix, reducedDim=None, adaptiveDimPartial=0.95, plot=False, display=False):
     Genders = ['male', 'female']
     for i in Genders:
@@ -65,8 +77,8 @@ def LDA(dataset_Matrix, reducedDim=None, adaptiveDimPartial=0.95, plot=False, di
 
     eig_vals, eig_vecs = la.eig(np.linalg.inv(S_W).dot(S_B))
     eig_vals = eig_vals.real
-    for i in range(len(eig_vals)):
-        eigvec_sc = eig_vecs[:,i].reshape(dim, 1)
+    # for i in range(len(eig_vals)):
+    #     eigvec_sc = eig_vecs[:,i].reshape(dim, 1)
 
     # Make a list of (eigenvalue, eigenvector) tuples
     eig_pairs = [(np.abs(eig_vals[i]), eig_vecs[:, i]) for i in range(len(eig_vals))]
@@ -85,13 +97,26 @@ def LDA(dataset_Matrix, reducedDim=None, adaptiveDimPartial=0.95, plot=False, di
     eigenVals = []
     for i, j in enumerate(eig_pairs):
         eigenVals.append(j[0])
-        print("Eigenvalue", i+1, ":", (j[0]*100/eigv_sum).real, "%")
+        # print("Eigenvalue", i+1, ":", (j[0]*100/eigv_sum).real, "%")
     eigenVals = np.array(eigenVals)
+
+    # Get Minimum Dimensions Count
+    minDims = reducedDim
+    if minDims is None:
+        minDims = GetMinDimForSum(eigenVals, partial=adaptiveDimPartial)
+    if minDims > len(Genders) - 1:
+        minDims = len(Genders) - 1
+
+    print("Selected Reduced Dimensions:", minDims)
+    print()
 
     if plot:
         PlotVals(eigenVals[::], plots=[False, True, False])
 
     W = eig_pairs[0][1].reshape(dim, 1)
+    for i in range(1, minDims):
+        W = np.hstack((W, eig_pairs[i][1].reshape(dim, 1)))
+        
     # print('Matrix W:\n', W.real)
 
     dataset_Matrix_LDA = dataset_Matrix.dot(W).real   #Converted Data_Matrix is dataset_Matrix_LDA
@@ -104,8 +129,8 @@ def LDA(dataset_Matrix, reducedDim=None, adaptiveDimPartial=0.95, plot=False, di
 # Params
 datasetPath = 'Assignment3/Data/gender_feature_vectors.csv'
 
-plot = True
-display = False
+plot = False
+display = True
 # Params
 
 # RunCode
