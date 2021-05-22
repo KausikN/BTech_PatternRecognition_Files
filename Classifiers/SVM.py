@@ -40,8 +40,8 @@ Y = np.array(Y).reshape(8, 1)
 
 m = len(X)
 
-print(np.dot(Y,Y.T))
-print(np.dot(X,X.T))
+print(np.dot(Y, Y.T))
+print(np.dot(X, X.T))
 P = matrix(np.dot(Y, Y.T) * np.dot(X, X.T))
 print(P)
 q = matrix(np.ones(m) * -1)
@@ -66,7 +66,7 @@ print(alpha)
 ind = (alpha > 1e-4).flatten()
 print(ind)
 
-W = np.dot(np.transpose(alpha*Y),X)
+W = np.dot(np.transpose(alpha*Y), X)
 print("W:\n", W)
 
 X_0 = np.array(X[0]).reshape(1, 2)
